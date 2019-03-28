@@ -915,7 +915,7 @@ impl<T: Trait> Module<T> {
 			Self::slashable_balance_of,
 			min_validator_count,
 			ElectionConfig::<BalanceOf<T>> {
-				equalise: false,
+				equalize: false,
 				tolerance: <BalanceOf<T>>::sa(10 as u64),
 				iterations: 10,
 			}
