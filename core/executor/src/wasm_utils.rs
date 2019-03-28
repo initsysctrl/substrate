@@ -86,7 +86,7 @@ macro_rules! resolve_fn {
 }
 
 #[macro_export]
-macro_rules! unmarshall_args {
+macro_rules! unmarshal_args {
 	( $body:tt, $objectname:ident, $args_iter:ident, $( $names:ident : $params:ty ),*) => ({
 		$(
 			let $names : <$params as $crate::wasm_utils::ConvertibleToWasm>::NativeType =
@@ -121,19 +121,19 @@ where
 }
 
 #[macro_export]
-macro_rules! marshall {
+macro_rules! marshal {
 	( $args_iter:ident, $objectname:ident, ( $( $names:ident : $params:ty ),* ) -> $returns:ty => $body:tt ) => ({
 		let body = $crate::wasm_utils::constrain_closure::<
 			<$returns as $crate::wasm_utils::ConvertibleToWasm>::NativeType, _
 		>(|| {
-			unmarshall_args!($body, $objectname, $args_iter, $( $names : $params ),*)
+			unmarshal_args!($body, $objectname, $args_iter, $( $names : $params ),*)
 		});
 		let r = body()?;
 		return Ok(Some({ use $crate::wasm_utils::ConvertibleToWasm; r.to_runtime_value() }))
 	});
 	( $args_iter:ident, $objectname:ident, ( $( $names:ident : $params:ty ),* ) => $body:tt ) => ({
 		let body = $crate::wasm_utils::constrain_closure::<(), _>(|| {
-			unmarshall_args!($body, $objectname, $args_iter, $( $names : $params ),*)
+			unmarshal_args!($body, $objectname, $args_iter, $( $names : $params ),*)
 		});
 		body()?;
 		return Ok(None)
@@ -152,7 +152,7 @@ macro_rules! dispatch_fn {
 
 	( @iter $index:expr, $index_ident:ident, $objectname:ident, $args_iter:ident, $name:ident ( $( $names:ident : $params:ty ),* ) $( -> $returns:ty )* => $body:tt $($tail:tt)*) => (
 		if $index_ident == $index {
-			{ marshall!($args_iter, $objectname, ( $( $names : $params ),* ) $( -> $returns )* => $body) }
+			{ marshal!($args_iter, $objectname, ( $( $names : $params ),* ) $( -> $returns )* => $body) }
 		}
 		dispatch_fn!( @iter $index + 1, $index_ident, $objectname, $args_iter $($tail)*)
 	);

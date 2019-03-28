@@ -83,7 +83,7 @@ decl_event!(
 );
 
 // The module declaration. This states the entry points that we handle. The
-// macro takes care of the marshalling of arguments and dispatch.
+// macro takes care of the marshaling of arguments and dispatch.
 //
 // Anyone can have these functions execute by signing and submitting
 // an extrinsic. Ensure that calls into each of these execute in a time, memory and

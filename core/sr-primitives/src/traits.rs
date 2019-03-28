@@ -673,7 +673,7 @@ impl<T: BlindCheckable, Context> Checkable<Context> for T {
 }
 
 /// An "executable" piece of information, used by the standard Substrate Executive in order to
-/// enact a piece of extrinsic information by marshalling and dispatching to a named function
+/// enact a piece of extrinsic information by marshaling and dispatching to a named function
 /// call.
 ///
 /// Also provides information on to whom this information is attributable and an index that allows

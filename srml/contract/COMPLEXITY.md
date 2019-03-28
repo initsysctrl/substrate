@@ -50,9 +50,9 @@ Since the module itself requests memory, the amount of allocation depends on the
 
 Invocation of an exported function in the sandboxed module consists of the following steps:
 
-1. Marshalling, copying and unmarshalling the arguments when passing them between the supervisor and executor,
+1. Marshaling, copying and unmarshaling the arguments when passing them between the supervisor and executor,
 2. Calling into the underlying VM,
-3. Marshalling, copying and unmarshalling the result when passing it between the executor and supervisor,
+3. Marshaling, copying and unmarshaling the result when passing it between the executor and supervisor,
 
 **Note** that the complexity of running the function code itself should be considered separately.
 
@@ -66,9 +66,9 @@ The size of the arguments and the return value depends on the exact function in 
 
 The executor handles each call from the guest. The execution of it consists of the following steps:
 
-1. Marshalling, copying and unmarshalling the arguments when passing them between the guest and executor,
+1. Marshaling, copying and unmarshaling the arguments when passing them between the guest and executor,
 2. Calling into the supervisor,
-3. Marshaling, copying and unmarshalling the result when passing it between the executor and guest.
+3. Marshaling, copying and unmarshaling the result when passing it between the executor and guest.
 
 **Note** that the complexity of running the supervisor handler should be considered separately.
 

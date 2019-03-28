@@ -62,8 +62,8 @@ macro_rules! gen_signature_dispatch {
 	};
 }
 
-/// Unmarshall arguments and then execute `body` expression and return its result.
-macro_rules! unmarshall_then_body {
+/// Unmarshal arguments and then execute `body` expression and return its result.
+macro_rules! unmarshal_then_body {
 	( $body:tt, $ctx:ident, $args_iter:ident, $( $names:ident : $params:ty ),* ) => ({
 		$(
 			let $names : <$params as $crate::wasm::env_def::ConvertibleToWasm>::NativeType =
@@ -102,19 +102,19 @@ where
 }
 
 #[macro_export]
-macro_rules! unmarshall_then_body_then_marshall {
+macro_rules! unmarshal_then_body_then_marshal {
 	( $args_iter:ident, $ctx:ident, ( $( $names:ident : $params:ty ),* ) -> $returns:ty => $body:tt ) => ({
 		let body = $crate::wasm::env_def::macros::constrain_closure::<
 			<$returns as $crate::wasm::env_def::ConvertibleToWasm>::NativeType, _
 		>(|| {
-			unmarshall_then_body!($body, $ctx, $args_iter, $( $names : $params ),*)
+			unmarshal_then_body!($body, $ctx, $args_iter, $( $names : $params ),*)
 		});
 		let r = body()?;
 		return Ok(sandbox::ReturnValue::Value({ use $crate::wasm::env_def::ConvertibleToWasm; r.to_typed_value() }))
 	});
 	( $args_iter:ident, $ctx:ident, ( $( $names:ident : $params:ty ),* ) => $body:tt ) => ({
 		let body = $crate::wasm::env_def::macros::constrain_closure::<(), _>(|| {
-			unmarshall_then_body!($body, $ctx, $args_iter, $( $names : $params ),*)
+			unmarshal_then_body!($body, $ctx, $args_iter, $( $names : $params ),*)
 		});
 		body()?;
 		return Ok(sandbox::ReturnValue::Unit)
@@ -131,7 +131,7 @@ macro_rules! define_func {
 			#[allow(unused)]
 			let mut args = args.iter();
 
-			unmarshall_then_body_then_marshall!(
+			unmarshal_then_body_then_marshal!(
 				args,
 				$ctx,
 				( $( $names : $params ),* ) $( -> $returns )* => $body
@@ -203,13 +203,13 @@ mod tests {
 	use crate::Trait;
 
 	#[test]
-	fn macro_unmarshall_then_body_then_marshall_value_or_trap() {
+	fn macro_unmarshal_then_body_then_marshal_value_or_trap() {
 		fn test_value(
 			_ctx: &mut u32,
 			args: &[sandbox::TypedValue],
 		) -> Result<ReturnValue, sandbox::HostError> {
 			let mut args = args.iter();
-			unmarshall_then_body_then_marshall!(
+			unmarshal_then_body_then_marshal!(
 				args,
 				_ctx,
 				(a: u32, b: u32) -> u32 => {
@@ -231,13 +231,13 @@ mod tests {
 	}
 
 	#[test]
-	fn macro_unmarshall_then_body_then_marshall_unit() {
+	fn macro_unmarshal_then_body_then_marshal_unit() {
 		fn test_unit(
 			ctx: &mut u32,
 			args: &[sandbox::TypedValue],
 		) -> Result<ReturnValue, sandbox::HostError> {
 			let mut args = args.iter();
-			unmarshall_then_body_then_marshall!(
+			unmarshal_then_body_then_marshal!(
 				args,
 				ctx,
 				(a: u32, b: u32) => {
@@ -281,13 +281,13 @@ mod tests {
 	}
 
 	#[test]
-	fn macro_unmarshall_then_body() {
+	fn macro_unmarshal_then_body() {
 		let args = vec![TypedValue::I32(5), TypedValue::I32(3)];
 		let mut args = args.iter();
 
 		let ctx: &mut u32 = &mut 0;
 
-		let r = unmarshall_then_body!(
+		let r = unmarshal_then_body!(
 			{
 				*ctx = a + b;
 				a * b
