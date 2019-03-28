@@ -114,7 +114,6 @@ impl<T: Trait> AccountDb<T> for DirectAccountDb {
 	fn commit(&mut self, s: ChangeSet<T>) {
 		let mut total_imbalance = SignedImbalance::zero();
 		for (address, changed) in s.into_iter() {
-			let trieid = <Self as AccountDb<T>>::get_or_create_trieid(&self, &address);
 			if let Some(balance) = changed.balance {
 				let (imbalance, outcome) = T::Currency::make_free_balance_be(&address, balance);
 				total_imbalance = total_imbalance.merge(imbalance);
@@ -132,11 +131,24 @@ impl<T: Trait> AccountDb<T> for DirectAccountDb {
 					<CodeHashOf<T>>::remove(&address);
 				}
 			}
-			for (k, v) in changed.storage.into_iter() {
-				if let Some(value) = v {
-					child::put_raw(&trieid[..], &k, &value[..]);
-				} else {
-					child::kill(&trieid[..], &k);
+			if !changed.storage.is_empty() {
+				let mut info = <AccountInfoOf<T>>::get(&address).unwrap();
+				let mut new_mem_stored = info.current_mem_stored;
+				for (k, v) in changed.storage.into_iter() {
+					if let Some(value) = child::get::<Vec<u8>>(&info.trie_id[..], &k) {
+						new_mem_stored -= value.len() as u64;
+					}
+
+					if let Some(value) = v {
+						new_mem_stored += value.len() as u64;
+						child::put_raw(&info.trie_id[..], &k, &value[..]);
+					} else {
+						child::kill(&info.trie_id[..], &k);
+					}
+				}
+				if new_mem_stored != info.current_mem_stored {
+					info.current_mem_stored = new_mem_stored;
+					<AccountInfoOf<T>>::insert(&address, info);
 				}
 			}
 		}
