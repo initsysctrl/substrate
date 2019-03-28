@@ -960,7 +960,7 @@ impl<T: Trait> Module<T> {
 	}
 
 	/// Call when a validator is determined to be offline. `count` is the
-	/// number of offences the validator has committed.
+	/// number of offenses the validator has committed.
 	///
 	/// NOTE: This is called with the controller (not the stash) account id.
 	pub fn on_offline_validator(controller: T::AccountId, count: usize) {
