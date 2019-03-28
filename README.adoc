@@ -39,7 +39,7 @@ Block := Header + Extrinsics + Justifications
 
 === Extrinsics
 
-Extrinsics in Substrate are pieces of information from "the outside world" that are contained in the blocks of the chain. You might think "ahh, that means *transactions*": in fact, no. Extrinsics fall into two broad categories of which only one is *transactions*. The other is known as *inherents*. The difference between these two is that transactions are signed and gossipped on the network and can be deemed useful *per se*. This fits the mould of what you would call transactions in Bitcoin or Ethereum.
+Extrinsics in Substrate are pieces of information from "the outside world" that are contained in the blocks of the chain. You might think "ahh, that means *transactions*": in fact, no. Extrinsics fall into two broad categories of which only one is *transactions*. The other is known as *inherents*. The difference between these two is that transactions are signed and gossipped on the network and can be deemed useful *per se*. This fits the mold of what you would call transactions in Bitcoin or Ethereum.
 
 Inherents, meanwhile, are not passed on the network and are not signed. They represent data which describes the environment but which cannot call upon anything to prove it such as a signature. Rather they are assumed to be "true" simply because a sufficiently large number of validators have agreed on them being reasonable.
 
