@@ -69,7 +69,7 @@ decl_module! {
 		fn propose(origin, #[compact] threshold: u32, proposal: Box<<T as Trait>::Proposal>) {
 			let who = ensure_signed(origin)?;
 
-			ensure!(Self::is_councillor(&who), "proposer not on council");
+			ensure!(Self::is_councilor(&who), "proposer not on council");
 
 			let proposal_hash = T::Hashing::hash_of(&proposal);
 
@@ -92,7 +92,7 @@ decl_module! {
 		fn vote(origin, proposal: T::Hash, #[compact] index: ProposalIndex, approve: bool) {
 			let who = ensure_signed(origin)?;
 
-			ensure!(Self::is_councillor(&who), "voter not on council");
+			ensure!(Self::is_councilor(&who), "voter not on council");
 
 			let mut voting = Self::voting(&proposal).ok_or("proposal must exist")?;
 			ensure!(voting.0 == index, "mismatched index");
@@ -170,7 +170,7 @@ decl_storage! {
 }
 
 impl<T: Trait> Module<T> {
-	pub fn is_councillor(who: &T::AccountId) -> bool {
+	pub fn is_councilor(who: &T::AccountId) -> bool {
 		<Council<T>>::active_council().iter()
 			.any(|&(ref a, _)| a == who)
 	}

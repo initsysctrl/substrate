@@ -52,7 +52,7 @@ use system::{self, ensure_signed};
 // to keep the system as stateless as possible (making it a bit easier to reason about), we just
 // restrict when votes can begin to blocks that lie on boundaries (`voting_period`).
 
-// for an approval vote of C councillors:
+// for an approval vote of C councilors:
 
 // top K runners-up are maintained between votes. all others are discarded.
 // - candidate removed & bond returned when elected.
@@ -64,7 +64,7 @@ use system::{self, ensure_signed};
 // they fall in the top K+C voted can present themselves. they get the total stake
 // recorded (based on the snapshot); an ordered list is maintained (the leaderboard). Noone may
 // present themselves that, if elected, would result in being included twice on the council
-// (important since existing councillors will have their approval votes as it may be that they
+// (important since existing councilors will have their approval votes as it may be that they
 // don't get removed), nor if existing presenters would mean they're not in the top K+C.
 
 // following B blocks, the top C candidates are elected and have their bond returned. the top C

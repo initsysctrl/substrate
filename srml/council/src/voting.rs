@@ -38,7 +38,7 @@ decl_module! {
 			let who = ensure_signed(origin)?;
 
 			let expiry = <system::Module<T>>::block_number() + Self::voting_period();
-			ensure!(Self::will_still_be_councillor_at(&who, expiry), "proposer would not be on council");
+			ensure!(Self::will_still_be_councilor_at(&who, expiry), "proposer would not be on council");
 
 			let proposal_hash = T::Hashing::hash_of(&proposal);
 
@@ -58,7 +58,7 @@ decl_module! {
 		fn vote(origin, proposal: T::Hash, approve: bool) {
 			let who = ensure_signed(origin)?;
 
-			ensure!(Self::is_councillor(&who), "only councillors may vote on council proposals");
+			ensure!(Self::is_councilor(&who), "only councilors may vote on council proposals");
 
 			if Self::vote_of((proposal, who.clone())).is_none() {
 				<ProposalVoters<T>>::mutate(proposal, |voters| voters.push(who.clone()));
@@ -69,14 +69,14 @@ decl_module! {
 		fn veto(origin, proposal_hash: T::Hash) {
 			let who = ensure_signed(origin)?;
 
-			ensure!(Self::is_councillor(&who), "only councillors may veto council proposals");
+			ensure!(Self::is_councilor(&who), "only councilors may veto council proposals");
 			ensure!(<ProposalVoters<T>>::exists(&proposal_hash), "proposal must exist to be vetoed");
 
 			let mut existing_vetoers = Self::veto_of(&proposal_hash)
 				.map(|pair| pair.1)
 				.unwrap_or_else(Vec::new);
 			let insert_position = existing_vetoers.binary_search(&who)
-				.err().ok_or("a councillor may not veto a proposal twice")?;
+				.err().ok_or("a councilor may not veto a proposal twice")?;
 			existing_vetoers.insert(insert_position, who);
 			Self::set_veto_of(
 				&proposal_hash,
@@ -143,14 +143,14 @@ impl<T: Trait> Module<T> {
 			.unwrap_or(false)
 	}
 
-	pub fn will_still_be_councillor_at(who: &T::AccountId, n: T::BlockNumber) -> bool {
+	pub fn will_still_be_councilor_at(who: &T::AccountId, n: T::BlockNumber) -> bool {
 		<Council<T>>::active_council().iter()
 			.find(|&&(ref a, _)| a == who)
 			.map(|&(_, expires)| expires > n)
 			.unwrap_or(false)
 	}
 
-	pub fn is_councillor(who: &T::AccountId) -> bool {
+	pub fn is_councilor(who: &T::AccountId) -> bool {
 		<Council<T>>::active_council().iter()
 			.any(|&(ref a, _)| a == who)
 	}
@@ -243,11 +243,11 @@ mod tests {
 			assert_eq!(Balances::free_balance(&42), 0);
 			assert_eq!(CouncilVoting::cooloff_period(), 2);
 			assert_eq!(CouncilVoting::voting_period(), 1);
-			assert_eq!(CouncilVoting::will_still_be_councillor_at(&1, 1), true);
-			assert_eq!(CouncilVoting::will_still_be_councillor_at(&1, 10), false);
-			assert_eq!(CouncilVoting::will_still_be_councillor_at(&4, 10), false);
-			assert_eq!(CouncilVoting::is_councillor(&1), true);
-			assert_eq!(CouncilVoting::is_councillor(&4), false);
+			assert_eq!(CouncilVoting::will_still_be_councilor_at(&1, 1), true);
+			assert_eq!(CouncilVoting::will_still_be_councilor_at(&1, 10), false);
+			assert_eq!(CouncilVoting::will_still_be_councilor_at(&4, 10), false);
+			assert_eq!(CouncilVoting::is_councilor(&1), true);
+			assert_eq!(CouncilVoting::is_councilor(&4), false);
 			assert_eq!(CouncilVoting::proposals(), Vec::<(u64, H256)>::new());
 			assert_eq!(CouncilVoting::proposal_voters(H256::default()), Vec::<u64>::new());
 			assert_eq!(CouncilVoting::is_vetoed(&H256::default()), false);
@@ -350,7 +350,7 @@ mod tests {
 
 			System::set_block_number(3);
 			assert_ok!(CouncilVoting::propose(Origin::signed(1), Box::new(proposal.clone())));
-			assert_noop!(CouncilVoting::veto(Origin::signed(2), hash), "a councillor may not veto a proposal twice");
+			assert_noop!(CouncilVoting::veto(Origin::signed(2), hash), "a councilor may not veto a proposal twice");
 		});
 	}
 
@@ -488,7 +488,7 @@ mod tests {
 			System::set_block_number(1);
 			let proposal = set_balance_proposal(42);
 			assert_ok!(CouncilVoting::propose(Origin::signed(1), Box::new(proposal.clone())));
-			assert_noop!(CouncilVoting::vote(Origin::signed(4), proposal.blake2_256().into(), true), "only councillors may vote on council proposals");
+			assert_noop!(CouncilVoting::vote(Origin::signed(4), proposal.blake2_256().into(), true), "only councilors may vote on council proposals");
 		});
 	}
 }
