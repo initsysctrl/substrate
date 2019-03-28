@@ -121,7 +121,7 @@ impl<T> Future for RemoteResponse<T> {
 
 	fn poll(&mut self) -> Poll<Self::Item, Self::Error> {
 		self.receiver.poll()
-			.map_err(|_| ClientErrorKind::RemoteFetchCancelled.into())
+			.map_err(|_| ClientErrorKind::RemoteFetchCanceled.into())
 			.and_then(|r| match r {
 				Async::Ready(Ok(ready)) => Ok(Async::Ready(ready)),
 				Async::Ready(Err(error)) => Err(error),

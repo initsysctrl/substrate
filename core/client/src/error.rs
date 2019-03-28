@@ -98,10 +98,10 @@ error_chain! {
 			display("Remote node has responded with invalid header proof"),
 		}
 
-		/// Remote fetch has been cancelled.
-		RemoteFetchCancelled {
-			description("remote fetch cancelled"),
-			display("Remote data fetch has been cancelled"),
+		/// Remote fetch has been canceled.
+		RemoteFetchCanceled {
+			description("remote fetch canceled"),
+			display("Remote data fetch has been canceled"),
 		}
 
 		/// Remote fetch has been failed.

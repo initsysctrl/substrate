@@ -127,7 +127,7 @@ decl_storage! {
 
 decl_event!(
 	pub enum Event<T> where <T as system::Trait>::Hash {
-		/// A voting tally has happened for a referendum cancellation vote.
+		/// A voting tally has happened for a referendum cancelation vote.
 		/// Last three are yes, no, abstain counts.
 		TallyCancelation(Hash, u32, u32, u32),
 		/// A voting tally has happened for a referendum vote.
@@ -265,16 +265,16 @@ mod tests {
 	}
 
 	#[test]
-	fn referendum_cancellation_should_work_when_unanimous() {
+	fn referendum_cancelation_should_work_when_unanimous() {
 		with_externalities(&mut new_test_ext(true), || {
 			System::set_block_number(1);
 			let proposal = set_balance_proposal(42);
 			assert_ok!(Democracy::internal_start_referendum(proposal.clone(), VoteThreshold::SuperMajorityApprove, 0), 0);
 			assert_eq!(Democracy::active_referendums(), vec![(0, ReferendumInfo::new(4, proposal, VoteThreshold::SuperMajorityApprove, 0))]);
 
-			let cancellation = cancel_referendum_proposal(0);
-			let hash = cancellation.blake2_256().into();
-			assert_ok!(CouncilVoting::propose(Origin::signed(1), Box::new(cancellation)));
+			let cancelation = cancel_referendum_proposal(0);
+			let hash = cancelation.blake2_256().into();
+			assert_ok!(CouncilVoting::propose(Origin::signed(1), Box::new(cancelation)));
 			assert_ok!(CouncilVoting::vote(Origin::signed(2), hash, true));
 			assert_ok!(CouncilVoting::vote(Origin::signed(3), hash, true));
 			assert_eq!(CouncilVoting::proposals(), vec![(2, hash)]);
@@ -288,15 +288,15 @@ mod tests {
 	}
 
 	#[test]
-	fn referendum_cancellation_should_fail_when_not_unanimous() {
+	fn referendum_cancelation_should_fail_when_not_unanimous() {
 		with_externalities(&mut new_test_ext(true), || {
 			System::set_block_number(1);
 			let proposal = set_balance_proposal(42);
 			assert_ok!(Democracy::internal_start_referendum(proposal.clone(), VoteThreshold::SuperMajorityApprove, 0), 0);
 
-			let cancellation = cancel_referendum_proposal(0);
-			let hash = cancellation.blake2_256().into();
-			assert_ok!(CouncilVoting::propose(Origin::signed(1), Box::new(cancellation)));
+			let cancelation = cancel_referendum_proposal(0);
+			let hash = cancelation.blake2_256().into();
+			assert_ok!(CouncilVoting::propose(Origin::signed(1), Box::new(cancelation)));
 			assert_ok!(CouncilVoting::vote(Origin::signed(2), hash, true));
 			assert_ok!(CouncilVoting::vote(Origin::signed(3), hash, false));
 			assert_ok!(CouncilVoting::end_block(System::block_number()));
@@ -308,15 +308,15 @@ mod tests {
 	}
 
 	#[test]
-	fn referendum_cancellation_should_fail_when_abstentions() {
+	fn referendum_cancelation_should_fail_when_abstentions() {
 		with_externalities(&mut new_test_ext(true), || {
 			System::set_block_number(1);
 			let proposal = set_balance_proposal(42);
 			assert_ok!(Democracy::internal_start_referendum(proposal.clone(), VoteThreshold::SuperMajorityApprove, 0), 0);
 
-			let cancellation = cancel_referendum_proposal(0);
-			let hash = cancellation.blake2_256().into();
-			assert_ok!(CouncilVoting::propose(Origin::signed(1), Box::new(cancellation)));
+			let cancelation = cancel_referendum_proposal(0);
+			let hash = cancelation.blake2_256().into();
+			assert_ok!(CouncilVoting::propose(Origin::signed(1), Box::new(cancelation)));
 			assert_ok!(CouncilVoting::vote(Origin::signed(2), hash, true));
 			assert_ok!(CouncilVoting::end_block(System::block_number()));
 

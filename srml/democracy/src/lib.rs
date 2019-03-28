@@ -248,7 +248,7 @@ decl_event!(
 		Started(ReferendumIndex, VoteThreshold),
 		Passed(ReferendumIndex),
 		NotPassed(ReferendumIndex),
-		Cancelled(ReferendumIndex),
+		Canceled(ReferendumIndex),
 		Executed(ReferendumIndex, bool),
 		Delegated(AccountId, AccountId),
 		Undelegated(AccountId),
@@ -347,7 +347,7 @@ impl<T: Trait> Module<T> {
 
 	/// Remove a referendum. Can be called directly by the council.
 	pub fn internal_cancel_referendum(ref_index: ReferendumIndex) {
-		Self::deposit_event(RawEvent::Cancelled(ref_index));
+		Self::deposit_event(RawEvent::Canceled(ref_index));
 		<Module<T>>::clear_referendum(ref_index);
 	}
 

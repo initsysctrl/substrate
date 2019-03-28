@@ -1470,7 +1470,7 @@ mod tests {
 		assert!(service.live_agreement.lock().as_ref().unwrap().0 != first);
 		assert!(service.live_agreement.lock().as_ref().unwrap().0 == second);
 
-		// first_bft has been cancelled. need to swap out so we can check it.
+		// first_bft has been canceled. need to swap out so we can check it.
 		let (_tx, mut rx) = oneshot::channel();
 		::std::mem::swap(&mut rx, &mut first_bft.cancel);
 

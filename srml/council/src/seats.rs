@@ -183,7 +183,7 @@ decl_module! {
 			}
 		}
 
-		/// Remove a voter. All votes are cancelled and the voter deposit is returned.
+		/// Remove a voter. All votes are canceled and the voter deposit is returned.
 		fn retract_voter(origin, #[compact] index: u32) {
 			let who = ensure_signed(origin)?;
 
