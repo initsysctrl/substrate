@@ -397,7 +397,7 @@ where
 	}
 }
 
-/// The severity of misbehaviour of a peer that is reported.
+/// The severity of misbehavior of a peer that is reported.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub enum Severity {
 	/// Peer is timing out. Could be bad connectivity of overload of work on either of our sides.
